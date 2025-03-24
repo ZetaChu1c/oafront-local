@@ -50,17 +50,14 @@
   </OAMain>
 </template>
 
+<script>
+// 解决方案：在两个script的其中一个单独注册Module
+Boot.registerModule(attachmentModule);
+</script>
+
 <script setup name="publishinform">
 import OAMain from "@/components/OAMain.vue";
-import {
-  ref,
-  reactive,
-  onMounted,
-  computed,
-  watch,
-  shallowRef,
-  onBeforeUnmount,
-} from "vue";
+import { ref, reactive, onMounted, shallowRef, onBeforeUnmount } from "vue";
 import "@wangeditor/editor/dist/css/style.css";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import staffHttp from "@/api/staffHttp";
@@ -68,6 +65,8 @@ import { ElMessage } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
 import informHttp from "@/api/informHttp";
 import router from "@/router";
+import { Boot } from "@wangeditor/editor";
+import attachmentModule from "@wangeditor/plugin-upload-attachment";
 
 const informForm = reactive({
   title: "",
@@ -106,17 +105,55 @@ let rules = reactive({
 });
 
 /////////// 以下是wangEditor相关配置 ///////////
-import { Boot } from "@wangeditor/editor";
 
 const editorRef = shallowRef();
 
-const toolbarConfig = {};
+// 注册插件
+Boot.registerPlugin(withEmptyHtml);
+
+const toolbarConfig = {
+  insertKeys: {
+    index: -1, // 自定义插入的位置
+    // 此处会出现重复注册Key的BUG
+    keys: ["uploadAttachment"], // “上传附件”菜单
+  },
+};
 // 此处如果使用火狐135.0.1（已测试）版本，会出现在编辑区输入中文，报DOMException: Node.removeChild错误
 // 推测为火狐不支持的API，换其他浏览器测试
 // https://github.com/wangeditor-next/wangEditor-next/issues/535
 const editorConfig = {
   placeholder: "请输入内容",
+
+  hoverbarKeys: {
+    attachment: {
+      menuKeys: ["downloadAttachment"],
+    },
+  },
+
   MENU_CONF: {
+    uploadAttachment: {
+      server: import.meta.env.VITE_BASE_URL + "/file/upload",
+      fieldName: "file",
+      maxFileSize: 10 * 1024 * 1024,
+      maxNumberOfFiles: 10,
+      allowedFileTypes: [],
+      headers: {
+        Authorization: "JWT " + authStore.token,
+      },
+      timeout: 6 * 1000,
+      customInsert(res, file, insertFn) {
+        console.log("customInsert", res);
+
+        if (res.errno == 0) {
+          let data = res.data;
+          let url = import.meta.env.VITE_BASE_URL + data.url;
+          insertFn(`${file.name}`, url);
+        } else {
+          ElMessage.error(res.message);
+        }
+      },
+    },
+
     uploadImage: {
       // http://localhost:5173/image/upload
       server: import.meta.env.VITE_BASE_URL + "/image/upload",
@@ -181,9 +218,6 @@ function withEmptyHtml(editor) {
 
   return newEditor;
 }
-
-// 注册插件
-Boot.registerPlugin(withEmptyHtml);
 
 /////////// 以上是wangEditor相关配置 ///////////
 
