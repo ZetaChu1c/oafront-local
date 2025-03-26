@@ -10,6 +10,7 @@ import home from "@/views/home/home.vue";
 import absent from "@/views/absent/index.vue";
 import inform from "@/views/inform/index.vue";
 import staff from "@/views/staff/index.vue";
+import department from "@/views/staff/deaprtment.vue";
 import { PermissionChoices } from "@/stores/auth";
 
 const routes = [
@@ -121,7 +122,7 @@ const routes = [
         component: staff,
         meta: {
           icon: "Avatar",
-          text: "员工管理",
+          text: "信息管理",
           permissions: [PermissionChoices.Boarder, PermissionChoices.Leader],
           opt: "|",
         },
@@ -150,6 +151,19 @@ const routes = [
               permissions: [
                 PermissionChoices.Boarder,
                 PermissionChoices.Leader,
+              ],
+              opt: "|",
+            },
+          },
+          {
+            path: "department",
+            name: "staff_department",
+            component: department,
+            meta: {
+              icon: "Histogram",
+              text: "部门管理",
+              permissions: [
+                PermissionChoices.Boarder,
               ],
               opt: "|",
             },

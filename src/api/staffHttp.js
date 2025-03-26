@@ -10,6 +10,11 @@ const addStaff = (realname, email, password) => {
   return http.post(path, { realname, email, password });
 };
 
+const addDepartment = (name, intro) => {
+  const path = "/staff/department";
+  return http.post(path, { name, intro });
+};
+
 const getStaffList = (page = 1, size = 10, paramas) => {
   const path = `/staff/staff`;
   paramas = paramas ? paramas : {};
@@ -25,12 +30,13 @@ const updateStaffStatus = (staff_id, status) => {
 
 const downloadStaffs = (pks) => {
   const path = "/staff/download";
-  return http.downloadFile(path, { "pks": JSON.stringify(pks) });
+  return http.downloadFile(path, { pks: JSON.stringify(pks) });
 };
 
 export default {
   getAllDepartment,
   addStaff,
+  addDepartment,
   getStaffList,
   updateStaffStatus,
   downloadStaffs,
