@@ -173,8 +173,8 @@ const routes = [
             component: leader,
             meta: {
               icon: "Histogram",
-              text: "部门管理",
-              permissions: [PermissionChoices.Boarder],
+              text: "部门列表",
+              permissions: [PermissionChoices.Boarder, PermissionChoices.Leader, PermissionChoices.Staff],
               opt: "|",
             },
           },
