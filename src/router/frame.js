@@ -11,6 +11,7 @@ import absent from "@/views/absent/index.vue";
 import inform from "@/views/inform/index.vue";
 import staff from "@/views/staff/index.vue";
 import department from "@/views/staff/deaprtment.vue";
+import leader from "@/views/staff/leader.vue";
 import { PermissionChoices } from "@/stores/auth";
 
 const routes = [
@@ -160,11 +161,20 @@ const routes = [
             name: "staff_department",
             component: department,
             meta: {
+              icon: "CirclePlusFilled",
+              text: "新增部门",
+              permissions: [PermissionChoices.Boarder],
+              opt: "|",
+            },
+          },
+          {
+            path: "leader",
+            name: "department_leader",
+            component: leader,
+            meta: {
               icon: "Histogram",
               text: "部门管理",
-              permissions: [
-                PermissionChoices.Boarder,
-              ],
+              permissions: [PermissionChoices.Boarder],
               opt: "|",
             },
           },

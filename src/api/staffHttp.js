@@ -23,6 +23,14 @@ const getStaffList = (page = 1, size = 10, paramas) => {
   return http.get(path, paramas);
 };
 
+const getDepartmentList = (page = 1, size = 10, paramas) => {
+  const path = "/staff/modify";
+  paramas = paramas ? paramas : {};
+  paramas["page"] = page;
+  paramas["size"] = size;
+  return http.get(path, paramas);
+};
+
 const updateStaffStatus = (staff_id, status) => {
   const path = "/staff/staff/" + staff_id;
   return http.put(path, { status });
@@ -40,4 +48,5 @@ export default {
   getStaffList,
   updateStaffStatus,
   downloadStaffs,
+  getDepartmentList,
 };
